@@ -45,9 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
     db.child("app-version-update").once().then((snapshot) {
       final json = Map<String, dynamic>.from(snapshot.value);
       final AppVersionMetadata appVersion = AppVersionMetadata.fromJson(json);
-      setState(() {
-        appVersionJson = appVersion.toJson().toString();
-      });
+      appVersionJson = appVersion.toJson().toString();
+      debugPrint(appVersionJson);
       AppVersionPopup.showIfNeeded(appVersion: appVersion, context: context);
     });
   }
@@ -58,15 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text("Client"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              appVersionJson,
-            ),
-          ],
-        ),
+      body: const Center(
+        child: Image(image: AssetImage("assets/images/logo_etiya.png"),),
       ),
     );
   }
