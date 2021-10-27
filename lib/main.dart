@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:app_version_update/app_version_update.dart';
+import 'package:maintenance_mode/maintenance_mode.dart';
 
 late FirebaseApp app;
 
@@ -35,20 +36,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   String appVersionJson = "";
   final DatabaseReference db = FirebaseDatabase(app: app).reference();
 
   @override
   void initState() {
     super.initState();
-    db.child("app-version-update").once().then((snapshot) {
+    db.child("appVersionUpdate").once().then((snapshot) {
       final json = Map<String, dynamic>.from(snapshot.value);
       final AppVersionMetadata appVersion = AppVersionMetadata.fromJson(json);
       appVersionJson = appVersion.toJson().toString();
       debugPrint(appVersionJson);
       AppVersionPopup.showIfNeeded(appVersion: appVersion, context: context);
     });
+    db.child("maintenanceMode").onValue
+        .map((event) => event.snapshot)
+        .forEach((snapshot) {
+          final json = Map<String, dynamic>.from(snapshot.value);
+          final MaintenanceMode maintenanceMode = MaintenanceMode.fromJson(json);
+          debugPrint(maintenanceMode.toJson().toString());
+          MaintenanceModeManager.shared.showIfNeeded(maintenanceMode: maintenanceMode, context: context);
+        });
   }
 
   @override
@@ -57,8 +65,19 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text("Client"),
       ),
-      body: const Center(
-        child: Image(image: AssetImage("assets/images/logo_etiya.png"),),
+      body: Stack(
+        children: [
+          Column(children: [
+            Text("Supported Features", style: Theme.of(context).textTheme.headline6,),
+            const Text("* App Version Update"),
+            const Text("* Maintenance Mode"),
+          ],),
+          const Center(
+            child: Image(
+              image: AssetImage("assets/images/logo_etiya.png"),
+            ),
+          )
+        ],
       ),
     );
   }

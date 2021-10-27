@@ -38,6 +38,9 @@ dependencies:
   app_version_update:
     path: ../mobile_app_admin_panel/packages/app_version_update
 
+  maintenance_mode:
+    path: ../mobile_app_admin_panel/packages/maintenance_mode
+
   firebase_core: "^1.7.0"
   firebase_database: "^8.0.0"
 
