@@ -42,21 +42,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    db.child("appVersionUpdate").once().then((snapshot) {
-      final json = Map<String, dynamic>.from(snapshot.value);
-      final AppVersionMetadata appVersion = AppVersionMetadata.fromJson(json);
-      appVersionJson = appVersion.toJson().toString();
-      debugPrint(appVersionJson);
-      AppVersionPopup.showIfNeeded(appVersion: appVersion, context: context);
-    });
-    db.child("maintenanceMode").onValue
-        .map((event) => event.snapshot)
-        .forEach((snapshot) {
-          final json = Map<String, dynamic>.from(snapshot.value);
-          final MaintenanceMode maintenanceMode = MaintenanceMode.fromJson(json);
-          debugPrint(maintenanceMode.toJson().toString());
-          MaintenanceModeManager.shared.showIfNeeded(maintenanceMode: maintenanceMode, context: context);
-        });
+    db.child("appVersionUpdate").once().then(
+      (snapshot) {
+        final json = Map<String, dynamic>.from(snapshot.value);
+        final AppVersionMetadata appVersion = AppVersionMetadata.fromJson(json);
+        appVersionJson = appVersion.toJson().toString();
+        debugPrint(appVersionJson);
+        AppVersionPopup.showIfNeeded(appVersion: appVersion, context: context);
+      },
+    );
+    db.child("maintenanceMode").onValue.map((event) => event.snapshot).forEach(
+      (snapshot) {
+        final json = Map<String, dynamic>.from(snapshot.value);
+        final MaintenanceMode maintenanceMode = MaintenanceMode.fromJson(json);
+        debugPrint(maintenanceMode.toJson().toString());
+        MaintenanceModeManager.shared
+            .showIfNeeded(maintenanceMode: maintenanceMode, context: context);
+      },
+    );
   }
 
   @override
@@ -65,18 +68,31 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text("Client"),
       ),
-      body: Stack(
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
         children: [
-          Column(children: [
-            Text("Supported Features", style: Theme.of(context).textTheme.headline6,),
-            const Text("* App Version Update"),
-            const Text("* Maintenance Mode"),
-          ],),
-          const Center(
+          ListTile(
+            title: Text(
+              "Supported Features",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ),
+          const ListTile(
+            title: Text("* App Version Update"),
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          ),
+          const ListTile(
+            title: Text("* Maintenance Mode"),
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          ),
+          const Spacer(flex: 1),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Image(
               image: AssetImage("assets/images/logo_etiya.png"),
             ),
-          )
+          ),
+          const Spacer(flex: 3),
         ],
       ),
     );
